@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Notely</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="bg"></div>
+
+  <!-- AUTH SCREEN -->
+  <main id="authScreen" class="auth-screen">
+    <div class="brand">
+      <div class="brand__icon" aria-hidden="true">
+        <!-- book icon -->
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+          <path d="M6 3h10a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          <path d="M6 3v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1 class="brand__title">Notely</h1>
+      <p class="brand__subtitle">Your thoughts, beautifully organized</p>
+    </div>
+
+    <section class="auth-card">
+      <div class="tabs">
+        <button id="tabSignIn" class="tab tab--active" type="button">Sign In</button>
+        <button id="tabSignUp" class="tab" type="button">Sign Up</button>
+      </div>
+
+      <!-- Sign In -->
+      <form id="formSignIn" class="form">
+        <label class="label">Email</label>
+        <input id="inEmail" class="input" type="email" placeholder="hello@example.com" autocomplete="email" required />
+
+        <label class="label">Password</label>
+        <input id="inPassword" class="input" type="password" placeholder="••••••••" autocomplete="current-password" required />
+
+        <button class="btn btn--primary" type="submit">
+          <span>Sign In</span>
+          <span class="btn__arrow">→</span>
+        </button>
+
+        <p id="authMsg" class="msg" role="status"></p>
+      </form>
+
+      <!-- Sign Up -->
+      <form id="formSignUp" class="form hidden">
+        <label class="label">Username</label>
+        <input id="upUsername" class="input" type="text" placeholder="beka" autocomplete="username" required />
+
+        <label class="label">Email</label>
+        <input id="upEmail" class="input" type="email" placeholder="hello@example.com" autocomplete="email" required />
+
+        <label class="label">Password</label>
+        <input id="upPassword" class="input" type="password" placeholder="min 6 chars" autocomplete="new-password" required />
+
+        <button class="btn btn--primary" type="submit">
+          <span>Sign Up</span>
+          <span class="btn__arrow">→</span>
+        </button>
+
+        <p id="authMsg2" class="msg" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <!-- APP SCREEN -->
+  <main id="appScreen" class="app-screen hidden">
+    <header class="topbar">
+      <div class="topbar__left">
+        <div class="topbar__logo" aria-hidden="true">
+          <div class="brand__icon brand__icon--small">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M6 3h10a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M6 3v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <div class="topbar__title">Notely</div>
+      </div>
+
+      <div class="topbar__right">
+        <div class="search">
+          <span class="search__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M21 21l-4.3-4.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z" stroke="currentColor" stroke-width="1.8"/>
+            </svg>
+          </span>
+          <input id="searchInput" class="search__input" placeholder="Search notes..." />
+        </div>
+
+        <button id="btnProfile" class="icon-btn" type="button" aria-label="Profile">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+            <path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <section class="page">
+      <div class="page__head">
+        <div>
+          <h2 id="welcomeTitle" class="welcome">Welcome back, <span id="welcomeName">user</span></h2>
+          <div id="notesCount" class="muted">0 notes total</div>
+        </div>
+
+        <button id="btnNewNote" class="btn btn--primary btn--small" type="button">
+          <span class="plus">＋</span>
+          <span>New Note</span>
+        </button>
+      </div>
+
+      <div id="emptyState" class="empty">
+        <div class="empty__icon" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M7 3h7l3 3v15a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M14 3v3h3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3>No notes yet</h3>
+        <p class="muted">Create your first note to get started</p>
+      </div>
+
+      <div id="notesGrid" class="grid hidden"></div>
+    </section>
+
+    <!-- NEW NOTE MODAL -->
+    <div id="modalBackdrop" class="backdrop hidden" aria-hidden="true"></div>
+    <section id="noteModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="New Note">
+      <div class="modal__head">
+        <div class="modal__title">New Note</div>
+        <button id="btnCloseModal" class="icon-btn" type="button" aria-label="Close">
+          <span style="font-size:18px;line-height:1">×</span>
+        </button>
+      </div>
+
+      <div class="modal__body">
+        <label class="label">Title</label>
+        <input id="noteTitle" class="input" placeholder="Note title" />
+
+        <label class="label">Content</label>
+        <textarea id="noteContent" class="textarea" placeholder="Write something..."></textarea>
+
+        <label class="label">Tags (comma separated)</label>
+        <input id="noteTags" class="input" placeholder="work, study" />
+
+        <label class="check">
+          <input id="notePinned" type="checkbox" />
+          <span>Pin note</span>
+        </label>
+
+        <p id="noteMsg" class="msg"></p>
+      </div>
+
+      <div class="modal__foot">
+        <button id="btnCreateNote" class="btn btn--primary" type="button">Create</button>
+      </div>
+    </section>
+
+    <!-- PROFILE DRAWER -->
+    <aside id="drawer" class="drawer hidden" aria-hidden="true">
+      <div class="drawer__head">
+        <div class="drawer__title">Profile</div>
+        <button id="btnCloseDrawer" class="icon-btn" type="button" aria-label="Close">
+          <span style="font-size:18px;line-height:1">×</span>
+        </button>
+      </div>
+
+      <div class="drawer__body">
+        <div class="avatar" aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+            <path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.8"/>
+          </svg>
+        </div>
+
+        <div class="idline muted">ID: <span id="profileId">-</span></div>
+
+        <label class="label">Username</label>
+        <input id="profileUsername" class="input" />
+
+        <label class="label">Email</label>
+        <input id="profileEmail" class="input" />
+
+        <button id="btnSaveProfile" class="btn btn--primary" type="button">
+          ✓ Save Changes
+        </button>
+
+        <p id="profileMsg" class="msg"></p>
+      </div>
+
+      <div class="drawer__foot">
+        <button id="btnLogout" class="btn btn--danger" type="button">Sign Out</button>
+      </div>
+    </aside>
+
+    <div id="drawerDim" class="dim hidden"></div>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
