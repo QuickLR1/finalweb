@@ -22,3 +22,7 @@ Advanced features include role-based access control (RBAC) and SMTP email integr
 ```bash
 git clone <your-repo-url>
 cd notes-final
+npm install
+npm run dev
+
+
