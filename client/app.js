@@ -1,10 +1,7 @@
-// ====== CONFIG ======
-// If you open frontend on the SAME PC: keep localhost.
-// If you open on phone: use your PC IP like http://192.168.1.25:5000
+
 const API_BASE = "http://localhost:5000/api";
 
 const tokenKey = "notely_token";
-const userKey = "notely_user";
 
 const el = (id) => document.getElementById(id);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
@@ -13,9 +10,7 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({
 
 function setToken(t){ localStorage.setItem(tokenKey, t); }
 function getToken(){ return localStorage.getItem(tokenKey); }
-function clearToken(){ localStorage.removeItem(tokenKey); localStorage.removeItem(userKey); }
-function setUser(u){ localStorage.setItem(userKey, JSON.stringify(u)); }
-function getUser(){ try { return JSON.parse(localStorage.getItem(userKey)||"null"); } catch { return null; } }
+function clearToken(){ localStorage.removeItem(tokenKey); }
 
 async function api(path, { method="GET", body } = {}) {
   const headers = { "Content-Type": "application/json" };
@@ -57,6 +52,15 @@ function setAuthTab(tab) {
 el("tabSignIn").addEventListener("click", () => setAuthTab("in"));
 el("tabSignUp").addEventListener("click", () => setAuthTab("up"));
 
+// ===== STATE =====
+let allNotes = [];
+let role = "user";
+let viewMode = "mine"; // mine | all
+
+function isAdminModeAllowed() {
+  return role === "admin" || role === "moderator";
+}
+
 // ===== AUTH ACTIONS =====
 el("formSignIn").addEventListener("submit", async (e) => {
   e.preventDefault();
@@ -66,7 +70,6 @@ el("formSignIn").addEventListener("submit", async (e) => {
     const password = el("inPassword").value;
     const data = await api("/auth/login", { method:"POST", body:{ email, password } });
     setToken(data.token);
-    setUser(data.user);
     await enterApp();
   } catch (err) {
     setMsg("authMsg", err.message);
@@ -82,7 +85,6 @@ el("formSignUp").addEventListener("submit", async (e) => {
     const password = el("upPassword").value;
     const data = await api("/auth/register", { method:"POST", body:{ username, email, password } });
     setToken(data.token);
-    setUser(data.user);
     await enterApp();
   } catch (err) {
     setMsg("authMsg2", err.message);
@@ -90,28 +92,58 @@ el("formSignUp").addEventListener("submit", async (e) => {
 });
 
 // ===== APP =====
-let allNotes = [];
-
 async function enterApp() {
   show("app");
   await loadProfile();
+  setupAdminToggle();
   await loadNotes();
 }
 
 async function loadProfile() {
   const profile = await api("/users/profile");
-  const uname = profile.username || "user";
-  el("welcomeName").textContent = uname;
+  role = profile.role || "user";
 
+  el("welcomeName").textContent = profile.username || "user";
   el("profileId").textContent = String(profile._id || profile.id || "-");
   el("profileUsername").value = profile.username || "";
   el("profileEmail").value = profile.email || "";
 }
 
+function setupAdminToggle() {
+  const btn = el("btnToggleAll");
+  if (!isAdminModeAllowed()) {
+    btn.classList.add("hidden");
+    viewMode = "mine";
+    return;
+  }
+
+  btn.classList.remove("hidden");
+  btn.textContent = viewMode === "all" ? "My notes" : "All notes";
+
+  btn.onclick = async () => {
+    viewMode = (viewMode === "all") ? "mine" : "all";
+    btn.textContent = viewMode === "all" ? "My notes" : "All notes";
+    await loadNotes();
+  };
+}
+
+async function loadNotes() {
+  const path = (viewMode === "all" && isAdminModeAllowed()) ? "/admin/notes" : "/notes";
+  const notes = await api(path);
+  allNotes = Array.isArray(notes) ? notes : [];
+  renderNotes();
+}
+
+el("searchInput").addEventListener("input", renderNotes);
+
 function renderNotes() {
   const q = el("searchInput").value.trim().toLowerCase();
+
   const filtered = allNotes.filter(n => {
-    const hay = `${n.title||""} ${n.content||""} ${(n.tags||[]).join(" ")}`.toLowerCase();
+    const ownerTxt = (n.user && typeof n.user === "object")
+      ? `${n.user.username || ""} ${n.user.email || ""} ${n.user.role || ""}`
+      : "";
+    const hay = `${n.title||""} ${n.content||""} ${(n.tags||[]).join(" ")} ${ownerTxt}`.toLowerCase();
     return hay.includes(q);
   });
 
@@ -125,12 +157,16 @@ function renderNotes() {
   grid.innerHTML = "";
 
   filtered.forEach(n => {
+    const owner = (viewMode === "all" && n.user && typeof n.user === "object")
+      ? ` • ${n.user.username || "?"} (${n.user.role || "user"})`
+      : "";
+
     const div = document.createElement("div");
     div.className = "note";
     div.innerHTML = `
       <div class="note__top">
         <div class="note__title">${esc(n.title)} ${n.pinned ? "📌" : ""}</div>
-        <div class="note__meta">${new Date(n.updatedAt).toLocaleString()}</div>
+        <div class="note__meta">${new Date(n.updatedAt).toLocaleString()}${owner}</div>
       </div>
       <div class="note__content">${esc(n.content || "")}</div>
       <div class="note__tags">${(n.tags && n.tags.length) ? `Tags: ${n.tags.map(esc).join(", ")}` : " "}</div>
@@ -148,16 +184,7 @@ function renderNotes() {
   grid.querySelectorAll("[data-edit]").forEach(b => b.addEventListener("click", () => editNote(b.dataset.edit)));
 }
 
-async function loadNotes() {
-  const notes = await api("/notes");
-  allNotes = Array.isArray(notes) ? notes : [];
-  el("notesCount").textContent = `${allNotes.length} notes total`;
-  renderNotes();
-}
-
-el("searchInput").addEventListener("input", renderNotes);
-
-// ===== NOTE ACTIONS =====
+// ===== NOTE MODAL =====
 function openModal() {
   el("noteTitle").value = "";
   el("noteContent").value = "";
@@ -195,7 +222,13 @@ el("btnCreateNote").addEventListener("click", async () => {
 
 async function delNote(id) {
   if (!confirm("Delete this note?")) return;
-  await api(`/notes/${id}`, { method:"DELETE" });
+
+  // ✅ If admin is viewing ALL notes -> delete ANY note via admin endpoint
+  const path = (viewMode === "all" && isAdminModeAllowed())
+    ? `/admin/notes/${id}`
+    : `/notes/${id}`;
+
+  await api(path, { method:"DELETE" });
   await loadNotes();
 }
 
@@ -207,6 +240,8 @@ async function togglePin(id) {
 }
 
 async function editNote(id) {
+  // Editing still uses normal endpoint, but it will succeed only if user owns the note.
+  // (This keeps "users only update their own notes" rule.)
   const note = allNotes.find(n => n._id === id);
   if (!note) return;
 
@@ -248,6 +283,7 @@ el("btnSaveProfile").addEventListener("click", async () => {
 
     await api("/users/profile", { method:"PUT", body });
     await loadProfile();
+    setupAdminToggle();
     setMsg("profileMsg", "Saved!");
     setTimeout(() => setMsg("profileMsg", ""), 1200);
   } catch (err) {

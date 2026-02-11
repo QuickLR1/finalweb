@@ -13,7 +13,6 @@
   <main id="authScreen" class="auth-screen">
     <div class="brand">
       <div class="brand__icon" aria-hidden="true">
-        <!-- book icon -->
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
           <path d="M6 3h10a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
           <path d="M6 3v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
@@ -29,7 +28,6 @@
         <button id="tabSignUp" class="tab" type="button">Sign Up</button>
       </div>
 
-      <!-- Sign In -->
       <form id="formSignIn" class="form">
         <label class="label">Email</label>
         <input id="inEmail" class="input" type="email" placeholder="hello@example.com" autocomplete="email" required />
@@ -45,7 +43,6 @@
         <p id="authMsg" class="msg" role="status"></p>
       </form>
 
-      <!-- Sign Up -->
       <form id="formSignUp" class="form hidden">
         <label class="label">Username</label>
         <input id="upUsername" class="input" type="text" placeholder="beka" autocomplete="username" required />
@@ -104,14 +101,18 @@
     <section class="page">
       <div class="page__head">
         <div>
-          <h2 id="welcomeTitle" class="welcome">Welcome back, <span id="welcomeName">user</span></h2>
+          <h2 class="welcome">Welcome back, <span id="welcomeName">user</span></h2>
           <div id="notesCount" class="muted">0 notes total</div>
         </div>
 
-        <button id="btnNewNote" class="btn btn--primary btn--small" type="button">
-          <span class="plus">＋</span>
-          <span>New Note</span>
-        </button>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <button id="btnToggleAll" class="small-btn hidden" type="button">All notes</button>
+
+          <button id="btnNewNote" class="btn btn--primary btn--small" type="button">
+            <span class="plus">＋</span>
+            <span>New Note</span>
+          </button>
+        </div>
       </div>
 
       <div id="emptyState" class="empty">

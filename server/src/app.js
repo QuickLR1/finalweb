@@ -1,34 +1,61 @@
 const express = require("express");
 const cors = require("cors");
-const helmet = require("helmet");
-const morgan = require("morgan");
-
-const authRoutes = require("./routes/authRoutes");
-const usersRoutes = require("./routes/usersRoutes");
-const noteRoutes = require("./routes/noteRoutes");
-const adminRoutes = require("./routes/adminRoutes");
-
-const { notFound } = require("./middleware/notFound");
-const { errorHandler } = require("./middleware/errorHandler");
+const path = require("path");
 
 const app = express();
 
-app.use(helmet());
+// ===== Core Middleware =====
 app.use(express.json({ limit: "1mb" }));
 
-const origins = (process.env.CORS_ORIGIN || "").split(",").map(s => s.trim()).filter(Boolean);
-app.use(cors({ origin: origins.length ? origins : true }));
+const corsOrigin = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",").map((s) => s.trim())
+  : "*";
 
-app.use(morgan("dev"));
+app.use(
+  cors({
+    origin: corsOrigin,
+    credentials: true
+  })
+);
 
-app.get("/health", (req, res) => res.json({ status: "ok" }));
+// ===== Health check =====
+app.get("/health", (req, res) => {
+  res.json({ status: "ok" });
+});
+
+// ===== API Routes =====
+const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+const noteRoutes = require("./routes/noteRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 
 app.use("/api/auth", authRoutes);
-app.use("/api/users", usersRoutes);
+app.use("/api/users", userRoutes);
 app.use("/api/notes", noteRoutes);
 app.use("/api/admin", adminRoutes);
 
-app.use(notFound);
-app.use(errorHandler);
+// ===== Serve Frontend (client) =====
+
+const clientDir = path.join(__dirname, "../../client");
+app.use(express.static(clientDir));
+
+// For SPA-like behavior (and to open index.html from root URL)
+app.get("/", (req, res) => {
+  res.sendFile(path.join(clientDir, "index.html"));
+});
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(clientDir, "index.html"));
+});
+
+// ===== Global Error Handler =====
+app.use((err, req, res, next) => {
+  console.error("ERROR:", err);
+
+  const status = err.statusCode || err.status || 500;
+  const message = err.message || "Internal Server Error";
+
+  res.status(status).json({ message });
+});
 
 module.exports = app;
