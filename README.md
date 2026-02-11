@@ -1,4 +1,4 @@
-Notely — Notes CRUD Web App (Final Project)
+<img width="419" height="115" alt="Снимок экрана 2026-02-09 201136" src="https://github.com/user-attachments/assets/f8c4c911-7aad-4f67-b57a-1c2b919d91e4" />Notely — Notes CRUD Web App (Final Project)
 
 A full-stack Notes web application with JWT authentication, MongoDB, role-based access control (RBAC), and SMTP email integration.
 
@@ -347,3 +347,14 @@ Author
 
 Isain Bexultan - SE 2402,
 Murat Tamerlan - SE 2402
+
+Screenshot with Functionality
+<img width="1326" height="966" alt="Снимок экрана 2026-02-09 201031" src="https://github.com/user-attachments/assets/b476d359-d7b9-4cda-91a3-9f78dc774b78" />
+<img width="1319" height="964" alt="Снимок экрана 2026-02-09 201059" src="https://github.com/user-attachments/assets/7d8c27e2-b9f6-4adf-b73b-df0a60f4b87a" />
+<img width="419" height="115" alt="Снимок экрана 2026-02-09 201136" src="https://github.com/user-attachments/assets/f176010a-c677-49c2-9a84-efb7f545b5d8" />
+<img width="1910" height="1014" alt="Снимок экрана 2026-02-09 201140" src="https://github.com/user-attachments/assets/64b8701c-2b37-4294-bb2d-5d89b4cf0c79" />
+<img width="1919" height="1025" alt="Снимок экрана 2026-02-09 201209" src="https://github.com/user-attachments/assets/f1ac5a81-ce26-4138-97e2-f364bc992897" />
+
+
+
+
