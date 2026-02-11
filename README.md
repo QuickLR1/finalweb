@@ -18,23 +18,23 @@ The project is built using a modular backend structure (routes, controllers, mod
 
 Features
 
-✅ Register / Login (JWT)
+ Register / Login (JWT)
 
-✅ Password hashing with bcrypt
+ Password hashing with bcrypt
 
-✅ Notes CRUD (Create, Read, Update, Delete)
+ Notes CRUD (Create, Read, Update, Delete)
 
-✅ Search notes (frontend)
+ Search notes (frontend)
 
-✅ Profile page (GET/PUT profile)
+ Profile page (GET/PUT profile)
 
-✅ RBAC roles: admin, moderator, user, premium
+ RBAC roles: admin, moderator, user, premium
 
-✅ SMTP Email integration with Nodemailer + SendGrid (welcome email on register)
+ SMTP Email integration with Nodemailer + SendGrid (welcome email on register)
 
-✅ Deployment on Render
+ Deployment on Render
 
-✅ Environment variables for secrets
+ Environment variables for secrets
 
 Tech Stack
 
@@ -145,7 +145,7 @@ JWT_SECRET
 
 CORS_ORIGIN (optional, can be *)
 
-⚠️ Do not set PORT on Render — Render provides it automatically.
+ Do not set PORT on Render — Render provides it automatically.
 
 API Documentation
 
@@ -337,12 +337,13 @@ Description: Admin/Moderator can switch to “All notes” view and delete any n
 
 Submission Links
 
-✅ GitHub Repository: https://github.com/QuickLR1/finalweb
+ GitHub Repository: https://github.com/QuickLR1/finalweb
 
-✅ Deployed URL: PASTE_YOUR_RENDER_URL_HERE
+ Deployed URL: PASTE_YOUR_RENDER_URL_HERE
 
-✅ ZIP Codebase: uploaded to LMS
+ ZIP Codebase: uploaded to LMS
 
 Author
 
-Isain Bexultan — SE 2402
+Isain Bexultan - SE 2402,
+Murat Tamerlan - SE 2402
